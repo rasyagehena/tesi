@@ -1,0 +1,40 @@
+global.getRandomPort = () => {
+    const min = 3000;
+    const max = 4000;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+
+const helloRoute = require('./routes/hello');
+const swaggerSpec = require('./swagger');
+
+const app = express();
+const PORT = global.getRandomPort();
+const setSwaggerUrl = (req, res, next) => {
+    req.swaggerUrl = `${req.protocol}://${req.get('host')}`;
+    next();
+};
+
+app.use(express.json());
+app.use(setSwaggerUrl);
+app.use(express.static('public'));
+
+app.use('/api/v1', helloRoute);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customCssUrl:
+      "https://cdn.jsdelivr.net/npm/swagger-ui-themes@3.0.0/themes/3.x/theme-newspaper.css",
+  })
+);
+
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+    
+    require('child_process').exec(`xdg-open http://localhost:${PORT}`); // Linux/macOS
+});
