@@ -1,0 +1,16 @@
+// swaggerDef.js
+const swaggerDefinition = {
+    openapi: '3.0.0',
+    info: {
+        title: 'My API',
+        version: '1.0.0',
+        description: 'API Documentation',
+    },
+    servers: [
+        {
+            url: `http://localhost:${global.getRandomPort()}`,
+        },
+    ],
+};
+
+module.exports = swaggerDefinition;
